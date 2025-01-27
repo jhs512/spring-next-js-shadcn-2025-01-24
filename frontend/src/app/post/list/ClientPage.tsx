@@ -45,7 +45,7 @@ export default function ClientPage({
   // armSize : 현재 중심 페이지 버튼의 좌측(혹은 우측) 나올 수 있는 페이지 버튼 수
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto">
       <h1 className="text-2xl font-bold text-center my-4">공개글</h1>
 
       <Card>
