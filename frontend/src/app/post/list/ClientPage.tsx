@@ -13,6 +13,87 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 
+function PaginationType1({
+  className,
+  baseQueryString,
+  totalPages,
+  currentPageNumber,
+}: {
+  className?: string;
+  baseQueryString: string;
+  totalPages: number;
+  currentPageNumber: number;
+}) {
+  const paginationArmSize = 1;
+  const pageButtonUrl = (pageNumber: number) =>
+    `?page=${pageNumber}&${baseQueryString}`;
+
+  const prevEllipsisButtonPageNumber =
+    currentPageNumber - paginationArmSize - 1 > 1
+      ? currentPageNumber - paginationArmSize - 1
+      : undefined;
+
+  const nextEllipsisButtonPageNumber =
+    currentPageNumber + paginationArmSize + 1 < totalPages
+      ? currentPageNumber + paginationArmSize + 1
+      : undefined;
+
+  return (
+    <Pagination className={className}>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationLink
+            href={pageButtonUrl(1)}
+            isActive={1 === currentPageNumber}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+
+        {prevEllipsisButtonPageNumber && (
+          <PaginationLink href={pageButtonUrl(prevEllipsisButtonPageNumber)}>
+            <PaginationEllipsis />
+          </PaginationLink>
+        )}
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(
+            (pageNum) =>
+              pageNum > 1 &&
+              pageNum < totalPages &&
+              pageNum >= currentPageNumber - paginationArmSize &&
+              pageNum <= currentPageNumber + paginationArmSize,
+          )
+          .map((pageNum) => (
+            <PaginationItem key={pageNum}>
+              <PaginationLink
+                href={pageButtonUrl(pageNum)}
+                isActive={currentPageNumber == pageNum}
+              >
+                {pageNum}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+
+        {nextEllipsisButtonPageNumber && (
+          <PaginationLink href={pageButtonUrl(nextEllipsisButtonPageNumber)}>
+            <PaginationEllipsis />
+          </PaginationLink>
+        )}
+
+        <PaginationItem>
+          <PaginationLink
+            href={pageButtonUrl(totalPages)}
+            isActive={currentPageNumber == totalPages}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
+
 export default function ClientPage({
   searchKeyword,
   searchKeywordType,
@@ -28,7 +109,6 @@ export default function ClientPage({
   const router = useRouter();
 
   // armSize : 현재 중심 페이지 버튼의 좌측(혹은 우측) 나올 수 있는 페이지 버튼 수
-  const paginationArmSize = 1;
 
   return (
     <div className="container mx-auto px-4">
@@ -80,91 +160,12 @@ export default function ClientPage({
       </div>
 
       <hr />
-
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationLink
-              href={`?page=1&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-              isActive={1 === itemPage.currentPageNumber}
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
-
-          {itemPage.currentPageNumber - paginationArmSize - 1 > 1 && (
-            <PaginationLink
-              href={`?page=${itemPage.currentPageNumber - paginationArmSize - 1}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-              isActive={
-                itemPage.currentPageNumber - paginationArmSize - 1 ===
-                itemPage.currentPageNumber
-              }
-            >
-              <PaginationEllipsis />
-            </PaginationLink>
-          )}
-
-          {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1)
-            .filter(
-              (pageNum) =>
-                pageNum > 1 &&
-                pageNum < itemPage.totalPages &&
-                itemPage.currentPageNumber - paginationArmSize <= pageNum &&
-                pageNum <= itemPage.currentPageNumber + paginationArmSize,
-            )
-            .map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  href={`?page=${pageNum}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-                  isActive={pageNum === itemPage.currentPageNumber}
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-          {itemPage.currentPageNumber + paginationArmSize + 1 <
-            itemPage.totalPages && (
-            <PaginationLink
-              href={`?page=${itemPage.currentPageNumber + paginationArmSize + 1}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-              isActive={
-                itemPage.currentPageNumber + paginationArmSize + 1 ===
-                itemPage.currentPageNumber
-              }
-            >
-              <PaginationEllipsis />
-            </PaginationLink>
-          )}
-
-          <PaginationItem>
-            <PaginationLink
-              href={`?page=${itemPage.totalPages}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-              isActive={itemPage.totalPages === itemPage.currentPageNumber}
-            >
-              {itemPage.totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-
-      <hr />
-
-      <div className="flex my-2 gap-2">
-        {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1).map(
-          (pageNum) => (
-            <Link
-              key={pageNum}
-              className={`px-2 py-1 border rounded ${
-                pageNum === itemPage.currentPageNumber ? "text-red-500" : ""
-              }`}
-              href={`?page=${pageNum}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-            >
-              {pageNum}
-            </Link>
-          ),
-        )}
-      </div>
-
+      <PaginationType1
+        className="my-2"
+        baseQueryString={`pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+        totalPages={itemPage.totalPages}
+        currentPageNumber={itemPage.currentPageNumber}
+      />
       <hr />
 
       <ul>
@@ -186,21 +187,14 @@ export default function ClientPage({
 
       <hr />
 
-      <div className="flex my-2 gap-2">
-        {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1).map(
-          (pageNum) => (
-            <Link
-              key={pageNum}
-              className={`px-2 py-1 border rounded ${
-                pageNum === itemPage.currentPageNumber ? "text-red-500" : ""
-              }`}
-              href={`?page=${pageNum}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
-            >
-              {pageNum}
-            </Link>
-          ),
-        )}
-      </div>
+      <PaginationType1
+        className="my-2"
+        baseQueryString={`pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+        totalPages={itemPage.totalPages}
+        currentPageNumber={itemPage.currentPageNumber}
+      />
+
+      <hr />
     </div>
   );
 }
