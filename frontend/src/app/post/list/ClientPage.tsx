@@ -8,6 +8,7 @@ import type { components } from "@/lib/backend/apiV1/schema";
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
 } from "@/components/ui/pagination";
@@ -25,6 +26,9 @@ export default function ClientPage({
   itemPage: components["schemas"]["PageDtoPostDto"];
 }) {
   const router = useRouter();
+
+  // armSize : 현재 중심 페이지 버튼의 좌측(혹은 우측) 나올 수 있는 페이지 버튼 수
+  const paginationArmSize = 1;
 
   return (
     <div className="container mx-auto px-4">
@@ -79,8 +83,25 @@ export default function ClientPage({
 
       <Pagination>
         <PaginationContent>
-          {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1).map(
-            (pageNum) => (
+          <PaginationItem>
+            <PaginationLink
+              href={`?page=1&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+              isActive={1 === itemPage.currentPageNumber}
+            >
+              1
+            </PaginationLink>
+          </PaginationItem>
+
+          <PaginationEllipsis />
+          {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1)
+            .filter(
+              (pageNum) =>
+                pageNum > 1 &&
+                pageNum < itemPage.totalPages &&
+                itemPage.currentPageNumber - paginationArmSize <= pageNum &&
+                pageNum <= itemPage.currentPageNumber + paginationArmSize,
+            )
+            .map((pageNum) => (
               <PaginationItem key={pageNum}>
                 <PaginationLink
                   href={`?page=${pageNum}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
@@ -89,8 +110,17 @@ export default function ClientPage({
                   {pageNum}
                 </PaginationLink>
               </PaginationItem>
-            ),
-          )}
+            ))}
+          <PaginationEllipsis />
+
+          <PaginationItem>
+            <PaginationLink
+              href={`?page=${itemPage.totalPages}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+              isActive={itemPage.totalPages === itemPage.currentPageNumber}
+            >
+              {itemPage.totalPages}
+            </PaginationLink>
+          </PaginationItem>
         </PaginationContent>
       </Pagination>
 
