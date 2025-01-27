@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 
 import type { components } from "@/lib/backend/apiV1/schema";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 export default function ClientPage({
   searchKeyword,
   searchKeywordType,
@@ -67,6 +77,35 @@ export default function ClientPage({
 
         <div>totalItems: {itemPage.totalItems}</div>
       </div>
+
+      <hr />
+
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="?page=1" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="?page=2">2</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="?page=3" isActive>
+              3
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="?page=4">4</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="?page=5">
+              <PaginationEllipsis />
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="?page=4" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
 
       <hr />
 
