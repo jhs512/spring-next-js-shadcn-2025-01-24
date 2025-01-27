@@ -92,7 +92,18 @@ export default function ClientPage({
             </PaginationLink>
           </PaginationItem>
 
-          <PaginationEllipsis />
+          {itemPage.currentPageNumber - paginationArmSize - 1 > 1 && (
+            <PaginationLink
+              href={`?page=${itemPage.currentPageNumber - paginationArmSize - 1}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+              isActive={
+                itemPage.currentPageNumber - paginationArmSize - 1 ===
+                itemPage.currentPageNumber
+              }
+            >
+              <PaginationEllipsis />
+            </PaginationLink>
+          )}
+
           {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1)
             .filter(
               (pageNum) =>
@@ -111,7 +122,19 @@ export default function ClientPage({
                 </PaginationLink>
               </PaginationItem>
             ))}
-          <PaginationEllipsis />
+
+          {itemPage.currentPageNumber + paginationArmSize + 1 <
+            itemPage.totalPages && (
+            <PaginationLink
+              href={`?page=${itemPage.currentPageNumber + paginationArmSize + 1}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+              isActive={
+                itemPage.currentPageNumber + paginationArmSize + 1 ===
+                itemPage.currentPageNumber
+              }
+            >
+              <PaginationEllipsis />
+            </PaginationLink>
+          )}
 
           <PaginationItem>
             <PaginationLink
