@@ -5,6 +5,7 @@ import com.ll.domain.member.member.service.MemberService;
 import com.ll.domain.post.post.entity.Post;
 import com.ll.domain.post.post.service.PostService;
 import com.ll.global.app.AppConfig;
+import com.ll.global.app.CustomConfigProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -18,6 +19,7 @@ import java.util.stream.IntStream;
 @Configuration
 @RequiredArgsConstructor
 public class BaseInitData {
+    private final CustomConfigProperties customConfigProperties;
     private final MemberService memberService;
     private final PostService postService;
     @Autowired
@@ -59,6 +61,17 @@ public class BaseInitData {
 
         Member memberUser6 = memberService.join("user6", "1234", "유저6", "");
         if (AppConfig.isNotProd()) memberUser6.setApiKey("user6");
+
+        for (var notProdMember : customConfigProperties.getNotProdMembers()) {
+            var member = memberService.join(
+                    notProdMember.username(),
+                    "",
+                    notProdMember.nickname(),
+                    notProdMember.profileImgUrl()
+            );
+
+            if (AppConfig.isNotProd()) member.setApiKey(notProdMember.apiKey());
+        }
     }
 
     @Transactional
