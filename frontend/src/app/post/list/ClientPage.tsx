@@ -8,11 +8,8 @@ import type { components } from "@/lib/backend/apiV1/schema";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 
 export default function ClientPage({
@@ -82,28 +79,18 @@ export default function ClientPage({
 
       <Pagination>
         <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="?page=1" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="?page=2">2</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="?page=3" isActive>
-              3
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="?page=4">4</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="?page=5">
-              <PaginationEllipsis />
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="?page=4" />
-          </PaginationItem>
+          {Array.from({ length: itemPage.totalPages }, (_, i) => i + 1).map(
+            (pageNum) => (
+              <PaginationItem key={pageNum}>
+                <PaginationLink
+                  href={`?page=${pageNum}&pageSize=${pageSize}&searchKeywordType=${searchKeywordType}&searchKeyword=${searchKeyword}`}
+                  isActive={pageNum === itemPage.currentPageNumber}
+                >
+                  {pageNum}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
         </PaginationContent>
       </Pagination>
 
