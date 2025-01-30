@@ -4,7 +4,6 @@ import com.ll.domain.member.member.entity.Member;
 import com.ll.domain.post.post.entity.Post;
 import com.ll.domain.post.post.repository.PostRepository;
 import com.ll.standard.search.PostSearchKeywordTypeV1;
-import com.ll.standard.util.Ut;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -64,8 +63,7 @@ public class PostService {
 
     public Page<Post> findByListedPaged(boolean listed, int page, int pageSize) {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-
-        return postRepository.findByListed(listed, pageRequest);
+        return postRepository.findByKw(null, null, null, null, listed, pageRequest);
     }
 
     public Page<Post> findByListedPaged(
@@ -75,23 +73,13 @@ public class PostService {
             int page,
             int pageSize
     ) {
-        if (Ut.str.isBlank(searchKeyword)) return findByListedPaged(listed, page, pageSize);
-
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-
-        searchKeyword = "%" + searchKeyword + "%";
-
-        return switch (searchKeywordType) {
-            case PostSearchKeywordTypeV1.content ->
-                    postRepository.findByListedAndContentLike(listed, searchKeyword, pageRequest);
-            default -> postRepository.findByListedAndTitleLike(listed, searchKeyword, pageRequest);
-        };
+        return postRepository.findByKw(searchKeywordType, searchKeyword, null, null, listed, pageRequest);
     }
 
     public Page<Post> findByAuthorPaged(Member author, int page, int pageSize) {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-
-        return postRepository.findByAuthor(author, pageRequest);
+        return postRepository.findByKw(null, null, author, null, null, pageRequest);
     }
 
     public Page<Post> findByAuthorPaged(
@@ -101,16 +89,7 @@ public class PostService {
             int page,
             int pageSize
     ) {
-        if (Ut.str.isBlank(searchKeyword)) return findByAuthorPaged(author, page, pageSize);
-
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-
-        searchKeyword = "%" + searchKeyword + "%";
-
-        return switch (searchKeywordType) {
-            case PostSearchKeywordTypeV1.content ->
-                    postRepository.findByAuthorAndContentLike(author, searchKeyword, pageRequest);
-            default -> postRepository.findByAuthorAndTitleLike(author, searchKeyword, pageRequest);
-        };
+        return postRepository.findByKw(searchKeywordType, searchKeyword, author, null, null, pageRequest);
     }
 }

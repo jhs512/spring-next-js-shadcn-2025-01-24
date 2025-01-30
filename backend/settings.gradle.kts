@@ -1,1 +1,1 @@
-rootProject.name = "next-js-oauth2-2025-01-20"
+rootProject.name = "next-js-shadcn-2025-01-24"
