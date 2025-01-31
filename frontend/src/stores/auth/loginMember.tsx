@@ -2,7 +2,7 @@
 
 import { createContext, use, useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import client from "@/lib/backend/client";
 
@@ -18,6 +18,8 @@ export const LoginMemberContext = createContext<{
   isAdmin: boolean;
   logout: (callback: () => void) => void;
   logoutAndHome: () => void;
+  isAdminPage: boolean;
+  isUserPage: boolean;
 }>({
   loginMember: createEmptyMember(),
   setLoginMember: () => {},
@@ -26,6 +28,8 @@ export const LoginMemberContext = createContext<{
   isAdmin: false,
   logout: () => {},
   logoutAndHome: () => {},
+  isAdminPage: false,
+  isUserPage: false,
 });
 
 function createEmptyMember(): Member {
@@ -40,6 +44,7 @@ function createEmptyMember(): Member {
 
 export function useLoginMember() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isLoginMemberPending, setLoginMemberPending] = useState(true);
   const [loginMember, _setLoginMember] = useState<Member>(createEmptyMember());
@@ -72,6 +77,9 @@ export function useLoginMember() {
     logout(() => router.replace("/"));
   };
 
+  const isAdminPage = pathname.startsWith("/adm");
+  const isUserPage = !isAdminPage;
+
   return {
     loginMember,
     setLoginMember,
@@ -81,6 +89,8 @@ export function useLoginMember() {
     isAdmin,
     logout,
     logoutAndHome,
+    isAdminPage,
+    isUserPage,
   };
 }
 
