@@ -7,6 +7,7 @@ import com.ll.standard.search.PostSearchKeywordTypeV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +63,7 @@ public class PostService {
     }
 
     public Page<Post> findByListedPaged(boolean listed, int page, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-        return postRepository.findByKw(null, null, null, null, listed, pageRequest);
+        return findByListedPaged(listed, null, null, page, pageSize);
     }
 
     public Page<Post> findByListedPaged(
@@ -73,13 +73,12 @@ public class PostService {
             int page,
             int pageSize
     ) {
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-        return postRepository.findByKw(searchKeywordType, searchKeyword, null, null, listed, pageRequest);
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
+        return postRepository.findByKw(searchKeywordType, searchKeyword, null, null, listed, pageable);
     }
 
     public Page<Post> findByAuthorPaged(Member author, int page, int pageSize) {
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-        return postRepository.findByKw(null, null, author, null, null, pageRequest);
+        return findByAuthorPaged(author, null, null, page, pageSize);
     }
 
     public Page<Post> findByAuthorPaged(
@@ -89,7 +88,7 @@ public class PostService {
             int page,
             int pageSize
     ) {
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
-        return postRepository.findByKw(searchKeywordType, searchKeyword, author, null, null, pageRequest);
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
+        return postRepository.findByKw(searchKeywordType, searchKeyword, author, null, null, pageable);
     }
 }
