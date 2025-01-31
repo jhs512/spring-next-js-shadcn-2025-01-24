@@ -628,7 +628,7 @@ export interface operations {
     items: {
         parameters: {
             query?: {
-                searchKeywordType?: "title" | "content";
+                searchKeywordType?: "all" | "title" | "content" | "author";
                 searchKeyword?: string;
                 page?: number;
                 pageSize?: number;
@@ -856,7 +856,7 @@ export interface operations {
     mine: {
         parameters: {
             query?: {
-                searchKeywordType?: "title" | "content";
+                searchKeywordType?: "all" | "title" | "content" | "author";
                 searchKeyword?: string;
                 page?: number;
                 pageSize?: number;
